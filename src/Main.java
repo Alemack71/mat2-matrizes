@@ -10,6 +10,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int opcao = -1;
 
+        lerArquivoMatrizes("matrizes.txt");
+
         while (opcao != 0) {
             exibirMenu();
             System.out.print("Escolha uma opção: ");
@@ -19,12 +21,18 @@ public class Main {
                 opcao = scanner.nextInt();
                 scanner.nextLine(); // Consome a quebra de linha após o número
 
-                // Switch moderno do Java 14+
                 switch (opcao) {
-                    case 1 -> lerArquivoMatrizes("matrizes.txt");
-                    case 2 -> listarMatrizesCarregadas();
-                    case 0 -> System.out.println("Encerrando o programa...");
-                    default -> System.out.println("Opção inválida. Tente novamente.\n");
+                    case 1 : realizarSoma(scanner);
+                        break;
+                    case 2 : listarMatrizesCarregadas();
+                        break;
+                    case 3 : transporMatriz(scanner);
+                        break;
+                    case 4 : realizarMultiplicacao(scanner);
+                        break;
+                    case 0 : System.out.println("Encerrando o programa...");
+                        break;
+                    default : System.out.println("Opção inválida. Tente novamente.\n");
                 }
             } else {
                 System.out.println("Por favor, digite um número válido.\n");
@@ -34,13 +42,14 @@ public class Main {
     }
 
     private static void exibirMenu() {
-        // Text Block para printar menu
         String menu = """
                 ===================================
-                |     CALCULADORA DE MATRIZES     |
+                |   CALCULADORA 2000 DE MATRIZES  |
                 ===================================
-                | 1. Ler arquivo (matrizes.txt)   |
+                | 1. Somar matrizes               |
                 | 2. Ver matrizes carregadas      |
+                | 3. Transpor matriz              |
+                | 4. Multiplicar matrizes         |
                 | 0. Sair                         |
                 ===================================
                 """;
@@ -130,5 +139,86 @@ public class Main {
             }
             System.out.println();
         }
+    }
+
+    public static void realizarSoma(Scanner scanner) {
+        System.out.print("Digite o nome da primeira matriz: ");
+        String nome1 = scanner.nextLine().trim();
+
+        System.out.print("Digite o nome da segunda matriz: ");
+        String nome2 = scanner.nextLine().trim();
+
+        double[][] m1 = matrizes.get(nome1);
+        double[][] m2 = matrizes.get(nome2);
+
+        if (m1 == null || m2 == null) {
+            System.out.println("Erro: Uma das matrizes não existe, digite novamente.\n");
+            return;
+        }
+
+        try {
+            double[][] resultado = Calculos.somar(m1, m2);
+
+            System.out.println("Resultado da Soma:");
+            imprimirResultado(resultado);
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage() + "\n");
+        }
+    }
+
+    public static void transporMatriz(Scanner scanner) {
+        System.out.print("Digite o nome da matriz: ");
+        String nome1 = scanner.nextLine().trim();
+
+        double[][] m = matrizes.get(nome1);
+
+        if (m == null) {
+            System.out.println("Erro: Essa matriz não existe, digite novamente.\n");
+            return;
+        }
+
+        try {
+            double[][] resultado = Calculos.transpor(m);
+
+            System.out.printf("Resultado da Transposta de %s: %n", nome1);
+            imprimirResultado(resultado);
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage() + "\n");
+        }
+    }
+
+    public static void realizarMultiplicacao(Scanner scanner) {
+        System.out.print("Digite o nome da primeira matriz: ");
+        String nome1 = scanner.nextLine().trim();
+
+        System.out.print("Digite o nome da segunda matriz: ");
+        String nome2 = scanner.nextLine().trim();
+
+        double[][] m1 = matrizes.get(nome1);
+        double[][] m2 = matrizes.get(nome2);
+
+        if (m1 == null || m2 == null) {
+            System.out.println("Erro: Uma das matrizes não existe, digite novamente.\n");
+            return;
+        }
+
+        try {
+            double[][] resultado = Calculos.multiplicar(m1, m2);
+
+            System.out.println("Resultado da Multiplicação:");
+            imprimirResultado(resultado);
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage() + "\n");
+        }
+    }
+
+    private static void imprimirResultado(double[][] matriz) {
+        for (double[] linha : matriz) {
+            for (double valor : linha) {
+                System.out.printf("%.0f\t", valor);
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
